@@ -12,4 +12,4 @@ Snake Game Implemented in C
 make && ./main
 ```
 
-Use arrow keys to move
+Use WASD or ARROW KEYS to move
