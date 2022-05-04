@@ -11,3 +11,5 @@ Snake Game Implemented in C
 ```console
 make && ./main
 ```
+
+Use arrow keys to move
