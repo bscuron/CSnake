@@ -4,7 +4,7 @@ Snake Game Implemented in C
 
 ## Demo
 
-![demo](./demo.mp4)
+![demo](./demo.gif)
 
 ## Run
 
