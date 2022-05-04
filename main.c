@@ -38,7 +38,7 @@ struct winsize getWinsize(int fd);
 void fillBoard(int* board, int value);
 void set(int* board, int row, int col, int value);
 int get(int* board, int row, int col);
-void showBoard(int* board);
+void showBoard(int* board, Snake* snake, int* slen);
 void updateBoard(int* board, Snake* snake, int* slen, int* directions, int* dlen, Food* food);
 void handleKeys(int* directions, int* dlen);
 void foodAte(int* board, Snake* snake, int* slen);
@@ -76,7 +76,7 @@ int main(void){
     while(!quit){
         handleKeys(directions, &dlen);
         updateBoard((int*) board, snake, &slen, directions, &dlen, &food);
-        showBoard((int*) board);
+        showBoard((int*) board, snake, &slen);
         usleep(DELAY);
     }
     endwin();
@@ -218,7 +218,7 @@ void fillBoard(int* board, int value){
     }
 }
 
-void showBoard(int* board){
+void showBoard(int* board, Snake* snake, int* slen){
     for(int y = 0; y < rows; y++){
         for(int x = 0; x < cols; x++){
             switch(get(board, y, x)){
@@ -234,5 +234,7 @@ void showBoard(int* board){
             }
         }
     }
+    int ty = snake[0].y > rows / 2 ? 0 : rows - 1;
+    mvprintw(ty, 0, "Score: %d\n", score);
     refresh();
 }
