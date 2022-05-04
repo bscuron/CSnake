@@ -4,6 +4,7 @@
 #include <sys/ioctl.h>
 #include <ncurses.h>
 #include <time.h>
+#include <string.h>
 
 #define DELAY 75000
 #define SCORE_INCREMENT 5
@@ -31,6 +32,7 @@ typedef struct Food{
 
 int rows, cols;
 int score = 1;
+int quit = 0;
 
 struct winsize getWinsize(int fd);
 void fillBoard(int* board, int value);
@@ -71,7 +73,6 @@ int main(void){
     noecho();
     nodelay(stdscr, TRUE);
     keypad(stdscr, TRUE);
-    int quit = 0;
     while(!quit){
         handleKeys(directions, &dlen);
         updateBoard((int*) board, snake, &slen, directions, &dlen, &food);
@@ -79,19 +80,20 @@ int main(void){
         usleep(DELAY);
     }
     endwin();
+    printf("%sFinal score: %d\n", score >= rows * cols ? "You win!, " : "", score);
     return 0;
 }
 
 void setFoodLocation(int* board, Snake* snake, int* slen, Food* food){
     int y, x;
-    int quit = 0;
-    while(!quit){
+    int cont = 0;
+    while(!cont){
         y = getRand(0, rows - 1);
         x = getRand(0, cols - 1);
-        quit = 1;
+        cont = 1;
         for(int i = 0; i < *slen; i++){
             if(snake[i].x == x && snake[i].y == y){
-                quit = 0;
+                cont = 0;
             }
         }
     }
@@ -110,15 +112,19 @@ void handleKeys(int* directions, int* dlen){
         case -1:
             return;
         case KEY_UP:
+            if(directions[*dlen - 1] == SOUTH) return;
             direction = NORTH;
             break;
         case KEY_DOWN:
+            if(directions[*dlen - 1] == NORTH) return;
             direction = SOUTH;
             break;
         case KEY_RIGHT:
+            if(directions[*dlen - 1] == WEST) return;
             direction = EAST;
             break;
         case KEY_LEFT:
+            if(directions[*dlen - 1] == EAST) return;
             direction = WEST;
             break;
     }
@@ -172,10 +178,17 @@ void updateBoard(int* board, Snake* snake, int* slen, int* directions, int* dlen
 
     for(int i = *slen; i >= 1; i--){
         snake[i] = snake[i - 1];
+        if(snake[i].x == part.x && snake[i].y == part.y){
+            quit = 1;
+        }
     }
     snake[0] = part;
 
     if(*slen < score) *slen += 1;
+
+    if(*slen >= rows * cols){
+        quit = 1;
+    }
 
     if(snake[0].y == food->y && snake[0].x == food->x){
         score += SCORE_INCREMENT;
@@ -213,7 +226,7 @@ void showBoard(int* board){
                     mvprintw(y, x, "%c\n", ' ');
                     break;
                 case CELL_SNAKE:
-                    mvprintw(y, x, "%c\n", 'X');
+                    mvprintw(y, x, "%c\n", '#');
                     break;
                 case CELL_FOOD:
                     mvprintw(y, x, "%c\n", '@');
