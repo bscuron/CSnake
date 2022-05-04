@@ -1,3 +1,4 @@
+#define _BSD_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -107,23 +108,27 @@ int getRand(int min, int max){
 
 void handleKeys(int* directions, int* dlen){
     int direction;
-    int code = getch();
+    wchar_t code = getch();
     switch(code){
         case -1:
             return;
         case KEY_UP:
+        case 'w':
             if(directions[*dlen - 1] == SOUTH) return;
             direction = NORTH;
             break;
         case KEY_DOWN:
+        case 's':
             if(directions[*dlen - 1] == NORTH) return;
             direction = SOUTH;
             break;
         case KEY_RIGHT:
+        case 'd':
             if(directions[*dlen - 1] == WEST) return;
             direction = EAST;
             break;
         case KEY_LEFT:
+        case 'a':
             if(directions[*dlen - 1] == EAST) return;
             direction = WEST;
             break;
