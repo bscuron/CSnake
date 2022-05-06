@@ -12,4 +12,8 @@ Snake Game Implemented in C
 make && ./main
 ```
 
-Use WASD or ARROW KEYS to move
+## Keyboard Controls
+
+`WASD` or `ARROW KEYS` to move
+
+`ENTER` or `SPACE` to pause

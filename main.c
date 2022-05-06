@@ -34,6 +34,7 @@ typedef struct Food{
 int rows, cols;
 int score = 1;
 int quit = 0;
+int paused = 0;
 
 struct winsize getWinsize(int fd);
 void fillBoard(int* board, int value);
@@ -76,6 +77,7 @@ int main(void){
     keypad(stdscr, TRUE);
     while(!quit){
         handleKeys(directions, &dlen);
+        if(paused) continue;
         updateBoard((int*) board, snake, &slen, directions, &dlen, &food);
         showBoard((int*) board, snake, &slen);
         usleep(DELAY);
@@ -132,11 +134,17 @@ void handleKeys(int* directions, int* dlen){
             if(directions[*dlen - 1] == EAST) return;
             direction = WEST;
             break;
+        case KEY_ENTER:
+        case '\n':
+        case ' ':
+            direction = directions[*dlen - 1];
+            paused = !paused;
     }
     int codeDup;
     int dup = 0;
     while((codeDup = getch()) == code) dup = 1;
     if(dup) ungetch(codeDup);
+    if(paused) return;
     *dlen += 1;
     directions[*dlen - 1] = direction;
 }
